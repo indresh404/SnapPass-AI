@@ -162,11 +162,11 @@ It handles:
 ### 1. Handling Missing Data (Controller)
 ```javascript
 import catchAsync from '../utils/catchAsync.js';
-import ValidationError from '../utils/errors/ValidationError.js';
+import AppError from '../utils/errors/AppError.js';
 
 export const uploadImage = catchAsync(async (req, res, next) => {
   if (!req.file) {
-    throw new ValidationError('Please provide an image file');
+    throw new AppError('Please provide an image file', 400);
   }
   
   // Process the file...
