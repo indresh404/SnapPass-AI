@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PhotoPreview from '../components/PhotoPreview';
 import BackgroundSelector from '../components/BackgroundSelector';
@@ -16,10 +16,32 @@ function EditorPage() {
   const { state } = useLocation();
   const navigate = useNavigate();
 
+  const [photoData, setPhotoData] = useState({
+    localUrl: state?.localUrl,
+    filename: state?.filename,
+    fileSize: state?.fileSize,
+  });
+
+  const fileInputRef = useRef(null);
+
   const [background, setBackground] = useState('white');
-  const [sizePreset, setSizePreset]  = useState('35x45');
+  const [sizePreset, setSizePreset] = useState('35x45');
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
+  const handleReplacePhoto = (event) => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const newLocalUrl = URL.createObjectURL(file);
+
+    setPhotoData({
+      localUrl: newLocalUrl,
+      filename: file.name,
+      fileSize: file.size,
+    });
+  };
+
 
   const handleProcess = async () => {
     setIsProcessing(true);
@@ -41,23 +63,23 @@ function EditorPage() {
     // Navigate to print preview — pass original url as placeholder for processed for now
     navigate('/print-preview', {
       state: {
-        processedUrl: state.localUrl, // replace with real processedUrl after backend integration
+        processedUrl: photoData.localUrl, // replace with real processedUrl after backend integration
         background,
         sizePreset,
       },
     });
   };
-// If user lands here directly without uploading, redirect
+  // If user lands here directly without uploading, redirect
 
   if (!state?.localUrl) {
-  return (
-    <EmptyState
-      title="No photo selected yet"
-      description="Please upload a passport photo before accessing the editor."
-      buttonText="Go to Upload"
-    />
-  );
-}
+    return (
+      <EmptyState
+        title="No photo selected yet"
+        description="Please upload a passport photo before accessing the editor."
+        buttonText="Go to Upload"
+      />
+    );
+  }
 
   return (
     <div className="editor-page page-content">
@@ -70,7 +92,7 @@ function EditorPage() {
         {/* Preview panel */}
         <section className="editor-page__preview card" aria-label="Photo preview">
           <PhotoPreview
-            originalUrl={state.localUrl}
+            originalUrl={photoData.localUrl}
             processedUrl={null}
             isProcessing={isProcessing}
           />
@@ -86,13 +108,28 @@ function EditorPage() {
           <div className="editor-page__info">
             <p className="editor-info-row">
               <span className="editor-info-label">File</span>
-              <span className="editor-info-value">{state.filename}</span>
+              <span className="editor-info-value">{photoData.filename}</span>
             </p>
             <p className="editor-info-row">
               <span className="editor-info-label">Size</span>
-              <span className="editor-info-value">{(state.fileSize / 1024).toFixed(1)} KB</span>
+              <span className="editor-info-value">{(photoData.fileSize / 1024).toFixed(1)} KB</span>
             </p>
           </div>
+
+          <input
+            type="file"
+            accept=".jpg,.jpeg,.png,.webp"
+            ref={fileInputRef}
+            onChange={handleReplacePhoto}
+            style={{ display: 'none' }}
+          />
+
+          <button
+            className="btn editor-page__replace-btn"
+            onClick={() => fileInputRef.current.click()}
+          >
+            🔄 Replace Photo
+          </button>
 
           <button
             className="btn btn-primary editor-page__process-btn"

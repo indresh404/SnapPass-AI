@@ -1,6 +1,16 @@
 /* ── EditorPage ─────────────────────────────────── */
-.editor-page { max-width: 1000px; display: flex; flex-direction: column; gap: var(--space-xl); }
-.editor-page__header { display: flex; flex-direction: column; gap: 4px; }
+.editor-page {
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.editor-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
 .editor-page__layout {
   display: grid;
@@ -9,7 +19,9 @@
   align-items: start;
 }
 
-.editor-page__preview { padding: var(--space-lg); }
+.editor-page__preview {
+  padding: var(--space-lg);
+}
 
 .editor-page__controls {
   display: flex;
@@ -32,12 +44,43 @@
   font-size: var(--font-size-sm);
 }
 
-.editor-info-label { color: var(--color-text-muted); }
-.editor-info-value { color: var(--color-text); font-weight: 500; font-size: var(--font-size-xs); }
+.editor-info-label {
+  color: var(--color-text-muted);
+}
 
-.editor-page__process-btn { width: 100%; justify-content: center; padding: 12px; }
+.editor-info-value {
+  color: var(--color-text);
+  font-weight: 500;
+  font-size: var(--font-size-xs);
+}
+
+.editor-page__process-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 12px;
+}
 
 @media (max-width: 768px) {
-  .editor-page__layout { grid-template-columns: 1fr; }
-  .editor-page__controls { position: static; }
+  .editor-page__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-page__controls {
+    position: static;
+  }
+}
+
+.editor-page__replace-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: all 0.2s ease;
+}
+
+.editor-page__replace-btn:hover {
+  background: var(--color-surface-hover);
+  transform: translateY(-1px);
 }
