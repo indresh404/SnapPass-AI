@@ -1,15 +1,6 @@
 version: "3.9"
 
 services:
-  mongo:
-    image: mongo:7
-    container_name: snappass-mongo
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-
   backend:
     build: ./backend
     container_name: snappass-backend
@@ -23,9 +14,7 @@ services:
       UPLOAD_DIR: uploads
       MAX_FILE_SIZE: 10485760
       CORS_ORIGIN: http://localhost:5173
-      MONGO_URI: mongodb://mongo:27017/snappass
     depends_on:
-      - mongo
       - python-ai-service
     volumes:
       - ./backend/uploads:/app/uploads
@@ -49,8 +38,3 @@ services:
       - "8000:8000"
     environment:
       PORT: 8000
-    depends_on:
-      - mongo
-
-volumes:
-  mongo_data:
