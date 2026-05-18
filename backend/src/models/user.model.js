@@ -1,12 +1,12 @@
-// Basic userSchema 
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    fullName: {
       type: String,
       required: true,
       trim: true,
+      maxlength: 120,
     },
     email: {
       type: String,
@@ -14,19 +14,31 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      maxlength: 255,
     },
     password: {
       type: String,
-      // Store a bcrypt hash, not the raw password.
-      // Maybe I will implement auth later if you want.
-      //My idea is to use bcrypt for hashing and storing passwords.
       required: true,
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    lastLoginAt: {
+      type: Date,
     },
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.index({ email: 1 }, { unique: true });
 
 const User = mongoose.model("User", userSchema);
 

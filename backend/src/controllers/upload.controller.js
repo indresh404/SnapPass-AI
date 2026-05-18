@@ -6,7 +6,7 @@
 
 import { v4 as uuidv4 } from "uuid";
 import { config } from "../config/config.js";
-import Upload from "../models/Upload.js";
+import Upload from "../models/upload.model.js";
 
 /**
  * POST /api/upload

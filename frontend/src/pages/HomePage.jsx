@@ -2,22 +2,53 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './HomePage.css';
 
+import {
+  Upload,
+  Sparkles,
+  Settings2,
+  Download,
+} from "lucide-react";
+
 /**
  * HomePage — landing page with hero section and feature highlights.
  */
 function HomePage() {
   const features = [
-    { icon: 'bg-remove', title: 'AI Background Removal', desc: 'Remove any background instantly with rembg — no manual selection needed.' },
-    { icon: 'face-center', title: 'Auto Face Centering', desc: 'OpenCV detects and centers your face to meet passport photo guidelines.' },
-    { icon: 'sizes', title: 'Standard Size Presets', desc: 'India, USA, UK, Schengen and more — pick a preset and we handle the DPI.' },
-    { icon: 'print', title: 'A4 Print Layout', desc: 'Generate a printable A4 sheet with multiple photos — save on printing costs.' },
+    {
+      icon: 'bg-remove',
+      title: 'AI Background Removal',
+      desc: 'Remove any background instantly with rembg — no manual selection needed.',
+      image: '/f-1.png',
+      tag: 'AI Powered',
+    },
+    {
+      icon: 'face-center',
+      title: 'Auto Face Centering',
+      desc: 'OpenCV detects and centers your face to meet passport photo guidelines.',
+      image: '/f-2.png',
+      tag: 'OpenCV',
+    },
+    {
+      icon: 'sizes',
+      title: 'Standard Size Presets',
+      desc: 'India, USA, UK, Schengen and more — pick a preset and we handle the DPI.',
+      image: '/f-3.png',
+      tag: 'Multiple Formats',
+    },
+    {
+      icon: 'print',
+      title: 'A4 Print Layout',
+      desc: 'Generate a printable A4 sheet with multiple photos — save on printing costs.',
+      image: '/f-4.png',
+      tag: 'Print Ready',
+    },
   ];
 
   const steps = [
-    { num: '01', label: 'Upload your photo' },
-    { num: '02', label: 'AI processes & centers' },
-    { num: '03', label: 'Choose size & quantity' },
-    { num: '04', label: 'Download & print' },
+    { label: 'Upload your photo', icon: <Upload size={22} />, subtitle: 'Choose a photo from your device' },
+    { label: 'AI processes & centers', icon: <Sparkles size={22} />, subtitle: 'Advanced AI optimization for your photo' },
+    { label: 'Choose size & quantity', icon: <Settings2 size={22} />, subtitle: 'Select your required photo format and copies' },
+    { label: 'Download & print', icon: <Download size={22} />, subtitle: 'Get a high-quality print-ready photo instantly' },
   ];
 
   const chips = [
@@ -106,7 +137,7 @@ function HomePage() {
             <div className="hero__photo-frame" />
             <div className="hero__photo-frame" />
           </div>
-          <span className="hero__ai-badge">✨ AI Processed</span>
+          <span className="hero__ai-badge"> AI Processed</span>
         </div>
       </section>
 
@@ -187,10 +218,13 @@ function HomePage() {
         <h2 id="steps-title" className="section-title text-center">How It Works</h2>
         <p className="section-subtitle text-center">Four simple steps to a print-ready sheet</p>
         <div className="steps-grid">
-          {steps.map(({ num, label }) => (
-            <div key={num} className="step-card">
-              <span className="step-card__num">{num}</span>
-              <p className="step-card__label">{label}</p>
+          {steps.map(({ label, icon, subtitle }) => (
+            <div key={label} className="step-card">
+              <span className="step-card__icon">{icon}</span>
+              <div className="step-card__content">
+                <p className="step-card__label">{label}</p>
+                <p className="step-card__subtitle">{subtitle}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -201,13 +235,36 @@ function HomePage() {
         <h2 id="features-title" className="section-title text-center">Features</h2>
         <p className="section-subtitle text-center">Everything you need right out of the box</p>
         <div className="features-grid">
-          {features.map(({ icon, title, desc }) => (
+          {features.map(({ icon, title, desc, image, tag }) => (
             <div key={title} className="feature-card card">
+
+              <div className="feature-card__preview">
+
+                <img
+                  src={image}
+                  alt={title}
+                  className="feature-card__image"
+                  loading="lazy"
+                />
+
+                <span className="feature-card__tag">
+                  {tag}
+                </span>
+
+              </div>
+
               <span className="feature-card__icon" aria-hidden="true">
                 {iconMap[icon]}
               </span>
-              <h3 className="feature-card__title">{title}</h3>
-              <p className="feature-card__desc">{desc}</p>
+
+              <h3 className="feature-card__title">
+                {title}
+              </h3>
+
+              <p className="feature-card__desc">
+                {desc}
+              </p>
+
             </div>
           ))}
         </div>
