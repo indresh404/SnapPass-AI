@@ -59,34 +59,44 @@ export const logout = catchAsync(async (req, res) => {
 
 export const requestPasswordReset = catchAsync(async (req, res) => {
     const { email } = req.body;
-    const user = await authService.getUserByEmail(email);
     
-    const otpRecord = await passwordResetOtpService.generateAndStoreOtp(user._id);
-    
-    const emailHtml = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
-            <div style="text-align: center; padding-bottom: 20px;">
-                <h2 style="color: #2563eb; margin: 0; font-size: 28px; font-weight: bold;">SnapPass AI</h2>
-            </div>
-            <div style="background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                <h3 style="color: #1f2937; margin-top: 0; font-size: 20px;">Password Reset</h3>
-                <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">We received a request to reset the password for your SnapPass AI account. Use the following One-Time Password (OTP) to proceed:</p>
-                <div style="text-align: center; margin: 30px 0;">
-                    <span style="display: inline-block; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #111827; background-color: #f3f4f6; padding: 15px 25px; border-radius: 8px; border: 1px solid #e5e7eb;">
-                        ${otpRecord.otp}
-                    </span>
+    try {
+        const user = await authService.getUserByEmail(email);
+        
+        const otpRecord = await passwordResetOtpService.generateAndStoreOtp(user._id);
+        
+        const emailHtml = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb;">
+                <div style="text-align: center; padding-bottom: 20px;">
+                    <h2 style="color: #2563eb; margin: 0; font-size: 28px; font-weight: bold;">SnapPass AI</h2>
                 </div>
-                <p style="color: #4b5563; font-size: 14px; line-height: 1.6;">This code is valid for <strong>5 minutes</strong>. If you did not request a password reset, please safely ignore this email.</p>
+                <div style="background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <h3 style="color: #1f2937; margin-top: 0; font-size: 20px;">Password Reset</h3>
+                    <p style="color: #4b5563; font-size: 16px; line-height: 1.6;">We received a request to reset the password for your SnapPass AI account. Use the following One-Time Password (OTP) to proceed:</p>
+                    <div style="text-align: center; margin: 30px 0;">
+                        <span style="display: inline-block; font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #111827; background-color: #f3f4f6; padding: 15px 25px; border-radius: 8px; border: 1px solid #e5e7eb;">
+                            ${otpRecord.otp}
+                        </span>
+                    </div>
+                    <p style="color: #4b5563; font-size: 14px; line-height: 1.6;">This code is valid for <strong>5 minutes</strong>. If you did not request a password reset, please safely ignore this email.</p>
+                </div>
+                <div style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 13px;">
+                    <p>&copy; ${new Date().getFullYear()} SnapPass AI. All rights reserved.</p>
+                </div>
             </div>
-            <div style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 13px;">
-                <p>&copy; ${new Date().getFullYear()} SnapPass AI. All rights reserved.</p>
-            </div>
-        </div>
-    `;
+        `;
+        
+        await sendEmail(email, "Password Reset OTP", emailHtml);
+    } catch (error) {
+        // If the error is simply that the user wasn't found, we silently ignore it 
+        // to prevent email enumeration. Otherwise, we rethrow the internal error.
+        if (error.statusCode !== 404 && error.name !== "NotFoundError") {
+            throw error;
+        }
+    }
     
-    await sendEmail(email, "Password Reset OTP", emailHtml);
-    
-    sendResponse(res, 200, true, "OTP sent to your email successfully", null);
+    // Always return success to not leak account existence
+    sendResponse(res, 200, true, "If an account with that email exists, an OTP has been sent.", null);
 });
 
 export const verifyPasswordResetOtp = catchAsync(async (req, res) => {
