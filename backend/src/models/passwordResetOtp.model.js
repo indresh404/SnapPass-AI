@@ -13,8 +13,12 @@ const passwordResetOtpSchema = new mongoose.Schema(
     },
     state: {
       type: String,
-      enum: ["pending", "resolve", "rejecte"],
+      enum: ["pending", "resolve", "reject", "rejecte"],
       default: "pending",
+    },
+    attempts: {
+      type: Number,
+      default: 0,
     },
     expiresAt: {
       type: Date,
