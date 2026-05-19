@@ -20,3 +20,7 @@ export async function findUserById(id) {
 export async function updateUserLastLogin(id) {
     return await User.findByIdAndUpdate(id, { lastLoginAt: new Date() }, { returnDocument: "after" });
 }
+
+export async function updateUserPassword(id, newPassword) {
+    return await User.findByIdAndUpdate(id, { password: newPassword }, { returnDocument: "after" });
+}
