@@ -6,6 +6,7 @@ on:
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend.yml'
+
   pull_request:
     branches: [ master, main ]
     paths:
@@ -29,16 +30,21 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: 'frontend/package-lock.json'
+          cache-dependency-path: frontend/package-lock.json
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Install Dependencies (stable for Vite + rolldown)
+        run: npm install --legacy-peer-deps
+        working-directory: frontend
+
+      # Optional but recommended for CI cleanliness
+      - name: Verify Install
+        run: npm ls
         working-directory: frontend
 
       - name: Build Vite Production Bundle
         run: npm run build
         working-directory: frontend
 
-      - name: Run Vitest Execution
+      - name: Run Tests
         run: npm run test
         working-directory: frontend
